@@ -1,0 +1,18 @@
+version: "2.3"
+
+services:
+  app:
+    build:
+      context: app
+    environment:
+      - API_URI=http://stub:8080
+    ports:
+      - 8090:8090
+    depends_on:
+      - stub
+
+  stub:
+    build:
+      context: stub
+    ports:
+      - 8080:8080
