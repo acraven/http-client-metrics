@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Grouchy.Abstractions;
 
-namespace Grouchy.Abstractions
+namespace Grouchy.Metrics
 {
-   public class Metric
+   public class Metric : IMetric
    {
       public string Name { get; set; }
 

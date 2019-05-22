@@ -12,7 +12,7 @@ namespace Grouchy.Metrics
          _logger = logger;
       }
 
-      public void Write(Metric metric)
+      public void Write(IMetric metric)
       {
          _logger.LogInformation("{@metric}", metric);
       }

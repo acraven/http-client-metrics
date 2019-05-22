@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Grouchy.Abstractions;
 using Microsoft.AspNetCore.Http;
 
 namespace DemoApi.Middleware
@@ -16,23 +17,25 @@ namespace DemoApi.Middleware
          _metricFactory = metricFactory;
       }
 
-      public async Task Invoke(HttpContext context)
+      public Task Invoke(HttpContext context)
       {
-         using (var metric = _metricFactory.CreateTimingMetric("http_request"))
-         {
-            try
-            {
-               await _next(context);
-            }
-            catch (Exception e)
-            {
-               await WriteResponse(context, HttpStatusCode.InternalServerError, "FAIL!");
+         return Task.CompletedTask;
 
-               metric.AddDimension("exception", e.GetType().Name);
-            }
-            
-            metric.AddDimension("statusCode", context.Response.StatusCode);
-         }
+//         using (var metric = _metricFactory.CreateTimingMetric("http_request"))
+//         {
+//            try
+//            {
+//               await _next(context);
+//            }
+//            catch (Exception e)
+//            {
+//               await WriteResponse(context, HttpStatusCode.InternalServerError, "FAIL!");
+//
+//               metric.AddDimension("exception", e.GetType().Name);
+//            }
+//            
+//            metric.AddDimension("statusCode", context.Response.StatusCode);
+//         }
       }
 
       private static async Task WriteResponse(HttpContext context, HttpStatusCode statusCode, string plainText)

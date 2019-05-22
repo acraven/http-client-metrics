@@ -15,9 +15,9 @@ namespace Grouchy.Metrics
 
    public class MetricFactory : IMetricFactory
    {
-      public ITimingMetric CreateTimingMetric(string name)
-      {
-         return new TimingMetric(name);
-      }
+//      public ITimingMetric CreateTimingMetric(string name)
+//      {
+//         return new TimingMetric(name);
+//      }
    }
 }

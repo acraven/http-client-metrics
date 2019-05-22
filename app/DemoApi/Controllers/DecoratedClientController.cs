@@ -19,7 +19,7 @@ namespace DemoApi.Controllers
         public void Post()
         {
             // Fire-and-forget
-            MetricFactory.MeasureAsync(() => _client.PostAsync("events/decorated"));
+            //MetricFactory.MeasureAsync(() => _client.PostAsync("events/decorated"));
         }
     }
 }

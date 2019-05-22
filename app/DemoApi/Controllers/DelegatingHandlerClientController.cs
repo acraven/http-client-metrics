@@ -18,7 +18,7 @@ namespace DemoApi.Controllers
         public void Post()
         {
             // Fire-and-forget
-            MetricFactory.MeasureAsync(() => _client.PostAsync("events/delegating-handler"));
+            //MetricFactory.MeasureAsync(() => _client.PostAsync("events/delegating-handler"));
         }
     }
 }

@@ -13,4 +13,9 @@
       <Version>3.1.1</Version>
     </PackageReference>
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Grouchy.Abstractions\Grouchy.Abstractions.csproj" />
+    <ProjectReference Include="..\Grouchy.Metrics\Grouchy.Metrics.csproj" />
+  </ItemGroup>
 </Project>

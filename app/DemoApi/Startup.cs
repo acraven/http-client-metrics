@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using DemoApi.Clients;
 using DemoApi.Middleware;
+using Grouchy.Abstractions;
+using Grouchy.Metrics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,6 +34,12 @@ namespace DemoApi
             services.AddSingleton<UndecoratedClient>();
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddTransient<IMetricWriter, LoggingMetricWriter>();
+            
+            var f = services.BuildServiceProvider();
+            var l = f.GetRequiredService<IMetricWriter>();
+            l.Write(new Metric { Name = "foo"});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
