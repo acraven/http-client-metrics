@@ -35,11 +35,11 @@ namespace DemoApi
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddTransient<IMetricWriter, LoggingMetricWriter>();
+            services.AddTransient<IMetricSink, LoggingMetricSink>();
             
             var f = services.BuildServiceProvider();
-            var l = f.GetRequiredService<IMetricWriter>();
-            l.Write(new Metric { Name = "foo"});
+            var l = f.GetRequiredService<IMetricSink>();
+            l.Push(new Metric { Name = "foo"});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

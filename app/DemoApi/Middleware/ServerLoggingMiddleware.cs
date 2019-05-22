@@ -9,12 +9,12 @@ namespace DemoApi.Middleware
    public class ServerLoggingMiddleware
    {
       private readonly RequestDelegate _next;
-      private readonly IMetricFactory _metricFactory;
+      private readonly ITimingBlockFactory _timingBlockFactory;
 
-      public ServerLoggingMiddleware(RequestDelegate next, IMetricFactory metricFactory)
+      public ServerLoggingMiddleware(RequestDelegate next, ITimingBlockFactory timingBlockFactory)
       {
          _next = next;
-         _metricFactory = metricFactory;
+         _timingBlockFactory = timingBlockFactory;
       }
 
       public Task Invoke(HttpContext context)

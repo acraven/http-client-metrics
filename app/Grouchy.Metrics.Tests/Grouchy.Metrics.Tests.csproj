@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TimingMetricScenarios" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Grouchy.Metrics\Grouchy.Metrics.csproj" />
   </ItemGroup>
 </Project>

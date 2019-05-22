@@ -13,11 +13,11 @@ namespace Grouchy.Metrics.Tests.SimpleMetricScenarios
       [Test]
       public void Test1()
       {
-         var logger = new StubLogger<LoggingMetricWriter>();
-         var m = new LoggingMetricWriter(logger);
+         var logger = new StubLogger<LoggingMetricSink>();
+         var m = new LoggingMetricSink(logger);
 
          var metric = new Metric {Name = "foo"};
-         m.Write(metric);
+         m.Push(metric);
 
          Assert.That(logger.Entries.Single().Values["@metric"], Is.SameAs(metric));
       }
