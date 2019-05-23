@@ -7,7 +7,7 @@ router.post('/events/:name', (req, res) => {
     () => {
       res.status(201).send({name});
     },
-    50 + Math.random() * 50);
+    100 + Math.random() * 100);
 });
 
 module.exports = router;

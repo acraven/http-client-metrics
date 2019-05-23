@@ -29,17 +29,14 @@ namespace DemoApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IMetricSink, LoggingMetricSink>();
+            services.AddTransient<ITimingBlockFactory, TimingBlockFactory>();
+
             services.AddSingleton<DecoratedClient>();
             services.AddSingleton<DelegatingHandlerClient>();
             services.AddSingleton<UndecoratedClient>();
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            services.AddTransient<IMetricSink, LoggingMetricSink>();
-            
-            var f = services.BuildServiceProvider();
-            var l = f.GetRequiredService<IMetricSink>();
-            l.Push(new Metric { Name = "foo"});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

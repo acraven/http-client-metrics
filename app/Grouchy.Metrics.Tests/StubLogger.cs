@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 
-namespace Grouchy.Metrics.Tests.SimpleMetricScenarios
+namespace Grouchy.Metrics.Tests
 {
    public class StubLogger<T> : ILogger<T>
    {

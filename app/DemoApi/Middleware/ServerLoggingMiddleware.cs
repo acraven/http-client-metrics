@@ -17,25 +17,27 @@ namespace DemoApi.Middleware
          _timingBlockFactory = timingBlockFactory;
       }
 
-      public Task Invoke(HttpContext context)
+      public async Task Invoke(HttpContext context)
       {
-         return Task.CompletedTask;
+         var timingBlock = _timingBlockFactory.Create("http_request");
 
-//         using (var metric = _metricFactory.CreateTimingMetric("http_request"))
-//         {
-//            try
-//            {
-//               await _next(context);
-//            }
-//            catch (Exception e)
-//            {
-//               await WriteResponse(context, HttpStatusCode.InternalServerError, "FAIL!");
-//
-//               metric.AddDimension("exception", e.GetType().Name);
-//            }
-//            
-//            metric.AddDimension("statusCode", context.Response.StatusCode);
-//         }
+         await timingBlock.ExecuteAsync(async () => 
+         {
+            try
+            {
+               await _next(context);
+            }
+            catch (Exception e)
+            {
+               await WriteResponse(context, HttpStatusCode.InternalServerError, "FAIL!");
+
+               // TODO:
+               // metric.AddDimension("exception", e.GetType().Name);
+            }
+            
+            // TODO:
+            // metric.AddDimension("statusCode", context.Response.StatusCode);
+         });
       }
 
       private static async Task WriteResponse(HttpContext context, HttpStatusCode statusCode, string plainText)

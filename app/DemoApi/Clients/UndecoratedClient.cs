@@ -10,12 +10,14 @@ namespace DemoApi.Clients
 
       public UndecoratedClient()
       {
-         _httpClient = new HttpClient { BaseAddress = new Uri(Constants.ApiUri) };
+         _httpClient = new HttpClient {BaseAddress = new Uri(Constants.ApiUri), Timeout = TimeSpan.FromSeconds(1)};
       }
       
       public async Task PostAsync(string uri)
       {
-         await _httpClient.PostAsync(uri, new StringContent(string.Empty));
+         var response = await _httpClient.PostAsync(uri, new StringContent("{}"));
+         
+         response.EnsureSuccessStatusCode();
       }
    }
 }
