@@ -11,7 +11,7 @@ namespace DemoApi.Clients
 
       public DelegatingHandlerClient()
       {
-         _httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler())) {BaseAddress = new Uri(Constants.ApiUri), Timeout = TimeSpan.FromSeconds(0.5)};
+         _httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler())) {BaseAddress = new Uri(Constants.ApiUri), Timeout = TimeSpan.FromSeconds(3)};
       }      
       
       public async Task PostAsync(string uri)
@@ -29,7 +29,7 @@ namespace DemoApi.Clients
          
          protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
          {
-            Console.WriteLine("foo");
+//            Console.WriteLine("foo");
 
             await Task.Delay(1, cancellationToken);
             
@@ -46,7 +46,7 @@ namespace DemoApi.Clients
             }
             finally
             {
-               Console.WriteLine("bar");
+  //             Console.WriteLine("bar");
             }
 
             return response;

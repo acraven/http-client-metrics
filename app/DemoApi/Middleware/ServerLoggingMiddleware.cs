@@ -31,6 +31,7 @@ namespace DemoApi.Middleware
             {
                await WriteResponse(context, HttpStatusCode.InternalServerError, "FAIL!");
 
+               Console.WriteLine("Server error!");
                // TODO:
                // metric.AddDimension("exception", e.GetType().Name);
             }

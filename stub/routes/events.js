@@ -1,6 +1,15 @@
 const router = require('express').Router();
 
-router.post('/events/:name', (req, res) => {
+var throttle = require("express-throttle");
+
+var options = {
+  "rate": "1/s",
+  "on_throttled": function(req, res, next, bucket) {
+    res.status(503).send();
+  }
+};
+
+router.post('/events/:name', throttle(options), (req, res) => {
   const name = req.params.name.toLowerCase();
 
   setTimeout(

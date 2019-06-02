@@ -10,7 +10,7 @@ namespace DemoApi.Clients
 
       public DecoratedClient()
       {
-         _httpClient = new HttpClient {BaseAddress = new Uri(Constants.ApiUri), Timeout = TimeSpan.FromSeconds(0.5)};
+         _httpClient = new HttpClient {BaseAddress = new Uri(Constants.ApiUri), Timeout = TimeSpan.FromSeconds(3)};
       }
 
       public async Task PostAsync(string uri)
