@@ -21,7 +21,7 @@ namespace Grouchy.Metrics.Tests
          if (state is IReadOnlyList<KeyValuePair<string, object>> values)
          {
             const string originalMessageKey = "{OriginalFormat}";
-            
+
             var (_, originalMessage) = values.SingleOrDefault(c => c.Key == originalMessageKey);
 
             entry.Values = new Dictionary<string, object>(values.Where(c => c.Key != originalMessageKey));

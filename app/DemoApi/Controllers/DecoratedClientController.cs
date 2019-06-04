@@ -1,32 +1,29 @@
 ﻿using System.Threading.Tasks;
-using DemoApi.Clients;
-using Grouchy.Abstractions;
+using DemoApi.Dependencies;
+using DemoApi.HttpClients;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DemoApi.Controllers
 {
-    [Route("decorated")]
-    [ApiController]
-    public class DecoratedClientController : ControllerBase
-    {
-        private readonly DecoratedClient _client;
-        private readonly ITimingBlockFactory _timingBlockFactory;
+   [Route("decorated")]
+   [ApiController]
+   public class DecoratedClientController : ControllerBase
+   {
+      private readonly DecoratedClient _client;
+      private readonly EventSink _eventSink;
 
-        public DecoratedClientController(
-            DecoratedClient client,
-            ITimingBlockFactory timingBlockFactory)
-        {
-            _client = client;
-            _timingBlockFactory = timingBlockFactory;
-        }
+      public DecoratedClientController(
+         DecoratedClient client,
+         EventSink eventSink)
+      {
+         _client = client;
+         _eventSink = eventSink;
+      }
 
-        [HttpPost]
-        public void Post()
-        {
-            var timingBlock = _timingBlockFactory.Create("http_client");
-            
-            // Fire-and-forget
-            timingBlock.ExecuteAsync(async () => await _client.PostAsync("events/decorated"));
-        }
-    }
+      [HttpPost]
+      public async Task Post()
+      {
+         await _eventSink.Post(_client, "decorated");
+      }
+   }
 }

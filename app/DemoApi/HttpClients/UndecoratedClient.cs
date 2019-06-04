@@ -2,7 +2,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace DemoApi.Clients
+namespace DemoApi.HttpClients
 {
    public class UndecoratedClient : IHttpClientWrapper
    {
@@ -10,14 +10,18 @@ namespace DemoApi.Clients
 
       public UndecoratedClient()
       {
-         _httpClient = new HttpClient {BaseAddress = new Uri(Constants.ApiUri), Timeout = TimeSpan.FromSeconds(3)};
+         _httpClient = new HttpClient
+         {
+            BaseAddress = new Uri(Constants.ApiUri),
+            Timeout = TimeSpan.FromSeconds(3)
+         };
       }
-      
-      public async Task PostAsync(string uri)
+
+      public async Task<HttpResponseMessage> PostAsync(string uri)
       {
          var response = await _httpClient.PostAsync(uri, new StringContent("{}"));
-         
-         response.EnsureSuccessStatusCode();
+
+         return response;
       }
    }
 }

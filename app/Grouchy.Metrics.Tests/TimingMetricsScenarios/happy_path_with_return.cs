@@ -5,9 +5,10 @@ using NUnit.Framework;
 
 namespace Grouchy.Metrics.Tests.TimingMetricsScenarios
 {
-   public class happy_path
+   public class happy_path_with_return
    {
       private StubMetricSink _metricSink;
+      private int _result;
 
       [OneTimeSetUp]
       public async Task setup_once_before_all_tests()
@@ -15,9 +16,20 @@ namespace Grouchy.Metrics.Tests.TimingMetricsScenarios
          _metricSink = new StubMetricSink();
 
          var timingBlockFactory = new TimingBlockFactory(_metricSink);
-         var timingBlock = timingBlockFactory.Create("foo");
+         var timingBlock = timingBlockFactory.Create("bar");
 
-         await timingBlock.ExecuteAsync(() => Task.Delay(100));
+         _result = await timingBlock.ExecuteAsync(async () =>
+         {
+            await Task.Delay(100);
+
+            return 23;
+         });
+      }
+
+      [Test]
+      public void should_return_result()
+      {
+         Assert.That(_result, Is.EqualTo(23));
       }
 
       [Test]
@@ -31,7 +43,7 @@ namespace Grouchy.Metrics.Tests.TimingMetricsScenarios
       {
          var metric = (Counter) _metricSink.Metrics.First();
 
-         Assert.That(metric.Name, Is.EqualTo("foo_start"));
+         Assert.That(metric.Name, Is.EqualTo("bar_start"));
       }
 
       [Test]
@@ -39,7 +51,7 @@ namespace Grouchy.Metrics.Tests.TimingMetricsScenarios
       {
          var metric = (Gauge) _metricSink.Metrics.Last();
 
-         Assert.That(metric.Name, Is.EqualTo("foo_end"));
+         Assert.That(metric.Name, Is.EqualTo("bar_end"));
          Assert.That(metric.Value, Is.InRange(50, 200));
       }
    }

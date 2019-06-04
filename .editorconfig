@@ -1,0 +1,13 @@
+root = true
+
+# All files
+[*]
+indent_style = space
+max_line_length = 160
+trim_trailing_whitespace = true
+insert_final_newline = false
+
+# Code files
+[*.cs]
+indent_size = 3
+charset = utf-8

@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace Grouchy.Metrics.Tests.TimingMetricsScenarios
 {
-   public class happy_path
+   public class happy_path_with_intermediate_dimensions
    {
       private StubMetricSink _metricSink;
 
@@ -17,7 +17,11 @@ namespace Grouchy.Metrics.Tests.TimingMetricsScenarios
          var timingBlockFactory = new TimingBlockFactory(_metricSink);
          var timingBlock = timingBlockFactory.Create("foo");
 
-         await timingBlock.ExecuteAsync(() => Task.Delay(100));
+         await timingBlock.ExecuteAsync(() =>
+         {
+            timingBlock.Dimensions.Add("end-only", "some-value");
+            return Task.Delay(100);
+         });
       }
 
       [Test]
@@ -32,6 +36,8 @@ namespace Grouchy.Metrics.Tests.TimingMetricsScenarios
          var metric = (Counter) _metricSink.Metrics.First();
 
          Assert.That(metric.Name, Is.EqualTo("foo_start"));
+         Assert.That(metric.Dimensions.Keys, Is.Empty);
+         Assert.That(metric.Dimensions.Values, Is.Empty);
       }
 
       [Test]
@@ -41,6 +47,8 @@ namespace Grouchy.Metrics.Tests.TimingMetricsScenarios
 
          Assert.That(metric.Name, Is.EqualTo("foo_end"));
          Assert.That(metric.Value, Is.InRange(50, 200));
+         Assert.That(metric.Dimensions.Keys, Is.EquivalentTo(new[] {"end-only"}));
+         Assert.That(metric.Dimensions.Values, Is.EquivalentTo(new[] {"some-value"}));
       }
    }
 }

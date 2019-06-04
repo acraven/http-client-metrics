@@ -1,5 +1,4 @@
 using Grouchy.Abstractions;
-using Polly;
 
 namespace Grouchy.Metrics
 {
@@ -11,7 +10,7 @@ namespace Grouchy.Metrics
       {
          _metricSink = metricSink;
       }
-      
+
       public ITimingBlock Create(string name)
       {
          return new TimingBlock(name, _metricSink);

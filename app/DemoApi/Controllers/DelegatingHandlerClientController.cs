@@ -1,49 +1,29 @@
-﻿using System;
-using System.Threading.Tasks;
-using DemoApi.Clients;
-using Grouchy.Abstractions;
+﻿using System.Threading.Tasks;
+using DemoApi.Dependencies;
+using DemoApi.HttpClients;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace DemoApi.Controllers
 {
-    [Route("delegating-handler")]
-    [ApiController]
-    public class DelegatingHandlerClientController : ControllerBase
-    {
-        private readonly DelegatingHandlerClient _client;
-        private readonly ITimingBlockFactory _timingBlockFactory;
-        private readonly ILogger<DelegatingHandlerClientController> _logger;
+   [Route("delegating-handler")]
+   [ApiController]
+   public class DelegatingHandlerClientController : ControllerBase
+   {
+      private readonly DecoratedClient _client;
+      private readonly EventSink _eventSink;
 
-        public DelegatingHandlerClientController(
-            DelegatingHandlerClient client,
-            ITimingBlockFactory timingBlockFactory,
-            ILogger<DelegatingHandlerClientController> logger)
-        {
-            _client = client;
-            _timingBlockFactory = timingBlockFactory;
-            _logger = logger;
-        }
+      public DelegatingHandlerClientController(
+         DecoratedClient client,
+         EventSink eventSink)
+      {
+         _client = client;
+         _eventSink = eventSink;
+      }
 
-        [HttpPost]
-        public void Post()
-        {
-            // Fire-and-forget
-            PostEvent();
-        }
-
-        private async Task PostEvent()
-        {
-            var timingBlock = _timingBlockFactory.Create("http_client");
-
-            try
-            {
-                await timingBlock.ExecuteAsync(async () => await _client.PostAsync("events/delegating-handler"));
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An unexpected error has occurred");
-            }
-        }
-    }
+      [HttpPost]
+      public async Task Post()
+      {
+         await _eventSink.Post(_client, "delegating-handler");
+      }
+   }
 }

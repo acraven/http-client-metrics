@@ -1,13 +1,16 @@
-FROM mhart/alpine-node:12.2
+FROM microsoft/dotnet:2.2-sdk-alpine as build
+WORKDIR /build
+
+COPY . .
+
+RUN dotnet build -c Release ./StubApi/StubApi.csproj
+RUN dotnet publish -c Release ./StubApi/StubApi.csproj
+
+FROM microsoft/dotnet:2.2-aspnetcore-runtime-alpine
 WORKDIR /app
-
-COPY package.json /app
-COPY yarn.lock /app
-RUN yarn install
-
-COPY . /app
 
 EXPOSE 8080
 
-# Using the exec form of CMD allows SIGINT to be passed from container to app
-CMD [ "node", "server.js" ]
+COPY --from=build /build/StubApi/bin/Release/netcoreapp2.2/publish .
+
+CMD ["dotnet", "StubApi.dll"]

@@ -18,23 +18,40 @@ namespace Grouchy.Metrics
          _metricSink = metricSink;
       }
 
+      public IDictionary<string, object> Dimensions { get; } = new Dictionary<string, object>();
+
       public async Task ExecuteAsync(Func<Task> action)
       {
+         if (action == null) throw new ArgumentNullException(nameof(action));
+
+         async Task<bool> VoidAction()
+         {
+            await action();
+            return true;
+         }
+
+         await ExecuteAsync(VoidAction);
+      }
+
+      public async Task<T> ExecuteAsync<T>(Func<Task<T>> action)
+      {
+         if (action == null) throw new ArgumentNullException(nameof(action));
+
          _metricSink.Push(new Counter
          {
-            Name = $"{_name}_start"
+            Name = $"{_name}_start",
+            Dimensions = Dimensions.ToDictionary(c => c.Key, c => c.Value)
          });
 
          var stopwatch = Stopwatch.StartNew();
-         var dimensions = new Dictionary<string, object>();
 
          try
          {
-            await action();
+            return await action();
          }
          catch (Exception e)
          {
-            dimensions.Add("exception", e.GetType().FullName);
+            Dimensions.Add("exception", e.GetType().FullName);
 
             throw;
          }
@@ -45,7 +62,7 @@ namespace Grouchy.Metrics
             _metricSink.Push(new Gauge
             {
                Name = $"{_name}_end",
-               Dimensions = dimensions,
+               Dimensions = Dimensions.ToDictionary(c => c.Key, c => c.Value),
                Value = stopwatch.ElapsedMilliseconds
             });
          }
