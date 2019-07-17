@@ -21,11 +21,11 @@ namespace StubApi.Middleware
 
          try
          {
+//TODO:            await Task.Delay(4000, context.RequestAborted);
             await _next(context);
          }
-         catch (OperationCanceledException e) when (e.CancellationToken == context.RequestAborted)
+         catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
          {
-            // TODO: This doesn't seem to catch
             await WriteResponse(context, (HttpStatusCode)499, "ABORTED!");
          }
          catch (Exception e)

@@ -1,9 +1,14 @@
-﻿using DemoApi.BackgroundServices;
+﻿using System;
+using DemoApi.BackgroundServices;
 using DemoApi.Dependencies;
 using DemoApi.HttpClients;
+using DemoApi.HttpClients.ExternallyDecorated;
+using DemoApi.HttpClients.InternallyDecorated;
+using DemoApi.HttpClients.Undecorated;
 using DemoApi.Middleware;
 using Grouchy.Abstractions;
 using Grouchy.Metrics;
+using Grouchy.Polly.RateLimit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -34,17 +39,27 @@ namespace DemoApi
 
          services.AddTransient<EventSink>();
 
-         services.AddSingleton<DecoratedClient>();
-         services.AddSingleton<DelegatingHandlerClient>();
-         services.AddSingleton<UndecoratedClient>();
+         services.AddSingleton(CreateHttpClient<ExternallyDecoratedClientFactory>);
+         services.AddSingleton(CreateHttpClient<InternallyDecoratedClientFactory>);
+         services.AddSingleton(CreateHttpClient<UndecoratedHttpClientFactory>);
 
          services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+      }
+
+      private static IHttpClient CreateHttpClient<TFactory>(IServiceProvider sp)
+         where TFactory : IHttpClientFactory
+      {
+         var factory = ActivatorUtilities.CreateInstance<TFactory>(sp);
+
+         return factory.Create();
       }
 
       // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
       public void Configure(IApplicationBuilder app, IHostingEnvironment env)
       {
-         app.UseMiddleware<ServerLoggingMiddleware>();
+         app.UseMiddleware<MetricsPushingMiddleware>();
+         app.UseMiddleware<ExceptionHandlingMiddleware>();
+         app.UseMiddleware<RateLimitingMiddleware>();
 
          app.UseMvc();
       }

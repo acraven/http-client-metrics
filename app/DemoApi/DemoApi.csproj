@@ -6,6 +6,7 @@
 
    <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.App" />
+      <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
       <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />
       <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
    </ItemGroup>
@@ -13,5 +14,6 @@
    <ItemGroup>
       <ProjectReference Include="..\Grouchy.Abstractions\Grouchy.Abstractions.csproj" />
       <ProjectReference Include="..\Grouchy.Metrics\Grouchy.Metrics.csproj" />
+      <ProjectReference Include="..\Grouchy.Polly\Grouchy.Polly.csproj" />
    </ItemGroup>
 </Project>

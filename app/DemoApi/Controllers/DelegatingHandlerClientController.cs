@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 using DemoApi.Dependencies;
 using DemoApi.HttpClients;
 using Microsoft.AspNetCore.Mvc;
@@ -9,21 +11,21 @@ namespace DemoApi.Controllers
    [ApiController]
    public class DelegatingHandlerClientController : ControllerBase
    {
-      private readonly DecoratedClient _client;
+      private readonly IHttpClient _httpClient;
       private readonly EventSink _eventSink;
 
       public DelegatingHandlerClientController(
-         DecoratedClient client,
+         IEnumerable<IHttpClient> httpClients,
          EventSink eventSink)
       {
-         _client = client;
+         _httpClient = httpClients.Single(c => c.Name == "internally-decorated");
          _eventSink = eventSink;
       }
 
       [HttpPost]
       public async Task Post()
       {
-         await _eventSink.Post(_client, "delegating-handler");
+         await _eventSink.Post(_httpClient, "delegating-handler");
       }
    }
 }

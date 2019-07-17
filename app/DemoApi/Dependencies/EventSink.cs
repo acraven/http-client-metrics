@@ -1,3 +1,5 @@
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using DemoApi.HttpClients;
 using Grouchy.Abstractions;
@@ -17,7 +19,7 @@ namespace DemoApi.Dependencies
          _timingBlockFactory = timingBlockFactory;
       }
 
-      public Task Post(IHttpClientWrapper httpClient, string name)
+      public Task Post(IHttpClient httpClient, string name)
       {
          // Fire and forget
          _backgroundTaskRunner.Execute(PostEventAsync(httpClient, name));
@@ -25,12 +27,14 @@ namespace DemoApi.Dependencies
          return Task.CompletedTask;
       }
 
-      private async Task PostEventAsync(IHttpClientWrapper httpClient, string name)
+      private async Task PostEventAsync(IHttpClient httpClient, string name)
       {
          var timingBlock = _timingBlockFactory.Create("post_event");
 
-         //TODO: Mmmmm not seeing exceptions thrown when the httpclient times-out
-         await timingBlock.ExecuteAsync(() => httpClient.PostAsync($"events/{name}"));
+         var request = new HttpRequestMessage(HttpMethod.Post, $"events/{name}") {Content = new StringContent("{}")};
+
+         // TODO: CancellationToken???
+         await timingBlock.ExecuteAsync(() => httpClient.SendAsync(request, CancellationToken.None));
       }
    }
 }
